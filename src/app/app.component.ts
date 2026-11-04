@@ -1,4 +1,5 @@
 
+import { CurrencyPipe, UpperCasePipe } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { GameService } from './services/game.service';
 import { Game } from './models/game';
@@ -6,28 +7,54 @@ import { Game } from './models/game';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  imports: [CurrencyPipe, UpperCasePipe]
 })
 export class AppComponent implements OnInit {
 
   games: Game[] = [];
+  private gameService = inject(GameService);
 
   selectedGenre = '';
   selectedPlatform = '';
+  minPrice = 0;
+  maxPrice = 0;
+  currentPage = 1;
+  pageSize = 5;
+  totalItems = 0;
+  totalPages = 0;
+  searchTitle = '';
+  searchGlobal = '';
 
-  private gameService = inject(GameService);
 
   ngOnInit(): void {
     this.cargarGames();
   }
 
   cargarGames(): void {
-    this.gameService.getGames(
+    this.currentPage = 1;
+    this.onChangePage();
+  }
+
+  onChangePage(): void {
+    this.gameService.getGamesPage(
+      this.currentPage,
+      this.pageSize,
       this.selectedGenre,
-      this.selectedPlatform
-    ).subscribe(games => {
-      this.games = games;
-      console.log(games);
+      this.selectedPlatform,
+      this.searchTitle,
+      this.searchGlobal,
+      this.minPrice,
+      this.maxPrice
+    ).subscribe(response => {
+      this.games = response.body ?? [];
+
+      this.totalItems = Number(
+        response.headers.get('X-Total-Count') ?? 0
+      );
+
+      this.totalPages = Math.ceil(
+        this.totalItems / this.pageSize
+      );
     });
   }
 
@@ -37,40 +64,56 @@ export class AppComponent implements OnInit {
     });
   }
 
-  onGenreChange(event: Event): void {
-    const select = event.target as HTMLSelectElement;
-    this.selectedGenre = select.value;
-    this.cargarGames();
-  }
-
-  onPlatformChange(event: Event): void {
-    const select = event.target as HTMLSelectElement;
-    this.selectedPlatform = select.value;
-    this.cargarGames();
-  }
-
   buscarTitulo(text: string): void {
-    if (!text.trim()) {
-      this.cargarGames();
-      return;
-    }
+    this.searchTitle = text;
+    this.currentPage = 1;
+    this.onChangePage();
+  }
 
-    this.gameService.searchGames(text).subscribe(games => {
-      this.games = games;
-      console.log(games);
-    });
+  onGenreChange(genre: string): void {
+    this.selectedGenre = genre;
+    this.currentPage = 1;
+    this.onChangePage();
+  }
+
+  onPlatformChange(platform: string): void {
+    this.selectedPlatform = platform;
+    this.currentPage = 1;
+    this.onChangePage();
   }
 
   buscarGlobal(text: string): void {
-    if (!text.trim()) {
-      this.cargarGames();
-      return;
-    }
+    this.searchGlobal = text;
+    this.currentPage = 1;
+    this.onChangePage();
+  }
 
-    this.gameService.searchGlobal(text).subscribe(games => {
-      this.games = games;
-      console.log(games);
-    });
+  onBuscarPrecio(price_gte: string, price_lte: string): void {
+    this.minPrice = price_gte ? +price_gte : 0;
+    this.maxPrice = price_lte ? +price_lte : 0;
+
+    this.currentPage = 1;
+    this.onChangePage();
+  }
+
+  paginaAnterior(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.onChangePage();
+    }
+  }
+
+  paginaSiguiente(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.onChangePage();
+    }
+  }
+
+  onPageSizeChange(limit: string): void {
+    this.pageSize = +limit;
+    this.currentPage = 1;
+    this.onChangePage();
   }
 
 }

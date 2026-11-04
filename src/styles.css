@@ -1,1 +1,36 @@
-/* You can add global styles to this file, and also import other style files */
+@import "tailwindcss";
+@import "./app/app.component.css";
+@source "./app/app.component.html";
+
+@theme {
+  --color-night: #0b0d12;
+  --color-panel: #11141b;
+  --font-display: "Inter", "Segoe UI", sans-serif;
+}
+
+@layer base {
+  :root {
+    color-scheme: dark;
+    background: #0b0d12;
+    font-family: var(--font-display);
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    min-width: 320px;
+    min-height: 100vh;
+    margin: 0;
+    background:
+      radial-gradient(ellipse at 50% -20rem, rgb(163 230 53 / 6%), transparent 50%),
+      #0b0d12;
+  }
+
+  button,
+  input,
+  select {
+    font: inherit;
+  }
+}

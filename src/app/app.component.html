@@ -1,66 +1,199 @@
-
-<div style="padding: 20px; font-family: sans-serif;">
-
-  <h1>Catálogo de Videojuegos</h1>
-
-  <div style="display: flex; flex-wrap: wrap; gap: 16px;">
-    <span>Buscar videojuego por ID:</span>
-    <input #myInput type="text">
-    <button (click)="buscarId(+myInput.value)">Buscar</button>
-  </div>
-
-  <div style="display: flex; flex-wrap: wrap; gap: 16px;">
-    <span>Buscar por título:</span>
-    <input #titleInput type="text" placeholder="Título...">
-    <button (click)="buscarTitulo(titleInput.value)">Buscar</button>
-  </div>
-
-  <div style="display: flex; flex-wrap: wrap; gap: 16px;">
-    <span>Búsqueda global:</span>
-    <input #globalInput type="text" placeholder="Buscar en todos los campos...">
-    <button (click)="buscarGlobal(globalInput.value)">Buscar</button>
-  </div>
-
-  <div style="display: flex; flex-wrap: wrap; gap: 16px;">
-    <span>Buscar por Género:</span>
-
-    <select (change)="onGenreChange($event)">
-      <option value="">Todos</option>
-      <option value="Action">Action</option>
-      <option value="Adventure">Adventure</option>
-      <option value="RPG">RPG</option>
-      <option value="Racing">Racing</option>
-      <option value="Simulation">Simulation</option>
-      <option value="Sports">Sports</option>
-      <option value="Strategy">Strategy</option>
-    </select>
-  </div>
-
-  <div style="display: flex; flex-wrap: wrap; gap: 16px;">
-    <span>Buscar por Plataforma:</span>
-
-    <select (change)="onPlatformChange($event)">
-      <option value="">Todas</option>
-      <option value="PC">PC</option>
-      <option value="PlayStation">PlayStation</option>
-      <option value="Xbox">Xbox</option>
-      <option value="Nintendo Switch">Nintendo Switch</option>
-    </select>
-  </div>
-
-  <div style="display: flex; flex-wrap: wrap; gap: 16px;">
-
-    @for (game of games; track game.id) {
-      <div style="border: 1px solid #ccc; padding: 16px; border-radius: 8px; width: 200px;">
-        <h3>{{ game.title }}</h3>
-        <p><strong>Género:</strong> {{ game.genre }}</p>
-        <p><strong>Plataforma:</strong> {{ game.platform }}</p>
-        <p><strong>Precio:</strong> {{ game.price }}</p>
+<div class="min-h-screen overflow-hidden bg-night text-white">
+  <header class="relative z-10 border-b border-white/[0.07]">
+    <div class="mx-auto flex max-w-[1440px] items-center justify-between px-5 py-5 sm:px-8 lg:px-12">
+      <a class="flex items-center gap-3" href="#" aria-label="Pixel Club, inicio">
+        <span class="brand-mark" aria-hidden="true">
+          <span></span><span></span><span></span><span></span>
+        </span>
+        <span class="text-sm font-black tracking-[0.2em]">PIXEL<span class="text-lime-300">CLUB</span></span>
+      </a>
+      <div class="hidden items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-[11px] font-semibold tracking-[0.16em] text-slate-400 sm:flex">
+        <span class="h-1.5 w-1.5 rounded-full bg-lime-300 shadow-[0_0_12px_#bef264]"></span>
+        TU PRÓXIMA AVENTURA TE ESPERA
       </div>
+      <span class="rounded-full border border-lime-300/20 bg-lime-300/10 px-3 py-1.5 text-[10px] font-bold tracking-[0.15em] text-lime-200">CATÁLOGO</span>
+    </div>
+  </header>
 
-    } @empty {
-      <p>No se encontraron videojuegos.</p>
-    }
-  </div>
+  <main class="relative mx-auto max-w-[1440px] px-5 pb-12 sm:px-8 lg:px-12">
+    <section class="hero relative isolate mb-10 mt-8 overflow-hidden rounded-[2rem] border border-white/[0.08] px-6 py-10 sm:px-10 sm:py-14 lg:mb-14 lg:px-16 lg:py-[4.5rem]">
+      <div class="hero-glow" aria-hidden="true"></div>
+      <div class="hero-orbit hero-orbit--one" aria-hidden="true"></div>
+      <div class="hero-orbit hero-orbit--two" aria-hidden="true"></div>
+      <div class="relative z-10 max-w-2xl">
+        <p class="mb-5 inline-flex items-center gap-2 rounded-full border border-lime-300/20 bg-lime-300/[0.08] px-3 py-1.5 text-[10px] font-extrabold tracking-[0.18em] text-lime-200 sm:text-xs">
+          <span class="text-base">✳</span> EL UNIVERSO GAMER, A TU ALCANCE
+        </p>
+        <h1 class="font-display text-4xl font-black leading-[1.05] tracking-[-0.055em] sm:text-6xl lg:text-7xl">
+          Encuentra tu<br class="hidden sm:block">
+          próxima <span class="title-gradient">aventura.</span>
+        </h1>
+        <p class="mt-5 max-w-lg text-sm leading-6 text-slate-400 sm:text-base sm:leading-7">
+          De mundos por descubrir a carreras imposibles: encuentra el juego que va contigo.
+        </p>
+        <div class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-xs font-medium text-slate-400">
+          <span class="flex items-center gap-2"><span class="text-lime-300">✦</span> {{ totalItems }} juegos para explorar</span>
+          <span class="flex items-center gap-2"><span class="text-lime-300">✦</span> Filtra. Encuentra. Juega.</span>
+        </div>
+      </div>
+      <div class="hero-console" aria-hidden="true">
+        <div class="console-disc"></div>
+        <div class="console-cross"><i></i><b></b></div>
+        <div class="console-button console-button--one"></div>
+        <div class="console-button console-button--two"></div>
+        <div class="console-light"></div>
+      </div>
+      <span class="hero-coordinate" aria-hidden="true">PC — 001 / PLAY</span>
+    </section>
 
+    <section class="mb-8">
+      <label class="sr-only" for="globalSearch">Buscar en todo el catálogo</label>
+      <div class="search-bar group flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.045] p-2 pl-4 transition focus-within:border-lime-300/40 focus-within:bg-white/[0.065] sm:pl-5">
+        <svg class="h-5 w-5 shrink-0 text-slate-500 transition group-focus-within:text-lime-300" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="10.8" cy="10.8" r="6.8" stroke="currentColor" stroke-width="1.7"></circle>
+          <path d="m16 16 4.2 4.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path>
+        </svg>
+        <input #globalInput id="globalSearch" class="min-w-0 flex-1 bg-transparent py-2 text-sm text-white outline-none placeholder:text-slate-500" type="search" placeholder="Busca un juego, género, plataforma..." (keydown.enter)="buscarGlobal(globalInput.value)">
+        <button class="primary-button shrink-0 rounded-xl px-5 py-3 text-xs font-bold tracking-wide transition hover:-translate-y-0.5 sm:px-7" type="button" (click)="buscarGlobal(globalInput.value)">Buscar <span class="ml-1">↗</span></button>
+      </div>
+    </section>
+
+    <div class="catalog-layout">
+      <aside class="filter-panel h-fit rounded-3xl border border-white/[0.08] bg-panel/80 p-5 sm:p-6">
+        <div class="mb-6 flex items-center justify-between">
+          <div>
+            <p class="text-[10px] font-bold tracking-[0.2em] text-lime-300">PERSONALIZA</p>
+            <h2 class="mt-1 text-lg font-bold tracking-tight">Tu búsqueda</h2>
+          </div>
+          <span class="filter-icon" aria-hidden="true">⌘</span>
+        </div>
+
+        <div class="filter-group">
+          <label for="genreSelect">Género</label>
+          <select #genreSelect id="genreSelect" (change)="onGenreChange(genreSelect.value)">
+            <option value="">Todos los géneros</option>
+            <option value="Action">Acción</option>
+            <option value="Adventure">Aventura</option>
+            <option value="Platform">Plataformas</option>
+            <option value="RPG">RPG</option>
+            <option value="Racing">Carreras</option>
+            <option value="Simulation">Simulación</option>
+            <option value="Sports">Deportes</option>
+            <option value="Strategy">Estrategia</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="platformSelect">Plataforma</label>
+          <select #platformSelect id="platformSelect" (change)="onPlatformChange(platformSelect.value)">
+            <option value="">Todas las plataformas</option>
+            <option value="PC">PC</option>
+            <option value="PlayStation">PlayStation</option>
+            <option value="Xbox">Xbox</option>
+            <option value="Switch">Nintendo Switch</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <span class="filter-label">Rango de precio</span>
+          <div class="grid grid-cols-2 gap-2">
+            <label class="sr-only" for="minPrice">Precio mínimo</label>
+            <input #precioMin id="minPrice" type="number" min="0" placeholder="Mín. €">
+            <label class="sr-only" for="maxPrice">Precio máximo</label>
+            <input #precioMax id="maxPrice" type="number" min="0" placeholder="Máx. €">
+          </div>
+          <button class="secondary-button mt-3 w-full rounded-xl px-4 py-3 text-xs font-semibold transition hover:border-lime-300/30 hover:text-lime-200" type="button" (click)="onBuscarPrecio(precioMin.value, precioMax.value)">Aplicar rango <span class="ml-1">→</span></button>
+        </div>
+
+        <div class="filter-group">
+          <label for="idSearch">¿Conoces el ID?</label>
+          <div class="flex gap-2">
+            <input #myInput id="idSearch" class="min-w-0 flex-1" type="number" min="1" placeholder="Ej. 08" (keydown.enter)="buscarId(+myInput.value)">
+            <button class="icon-button" type="button" aria-label="Buscar por ID" (click)="buscarId(+myInput.value)">↗</button>
+          </div>
+        </div>
+
+        <div class="mt-6 rounded-2xl border border-lime-300/10 bg-lime-300/[0.045] p-4">
+          <p class="text-xs font-semibold text-slate-200">Un universo de posibilidades</p>
+          <p class="mt-1 text-[11px] leading-5 text-slate-500">Combina filtros y encuentra tu siguiente juego favorito.</p>
+        </div>
+      </aside>
+
+      <section class="min-w-0">
+        <div class="mb-5 flex flex-col justify-between gap-4 sm:mb-7 sm:flex-row sm:items-end">
+          <div>
+            <p class="mb-2 text-[10px] font-bold tracking-[0.2em] text-slate-500">DESCUBRE ALGO NUEVO</p>
+            <h2 class="text-2xl font-black tracking-tight sm:text-3xl">Explora el catálogo<span class="text-lime-300">.</span></h2>
+            <p class="mt-2 text-xs text-slate-500">{{ totalItems }} resultados en tu colección</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <label class="sr-only" for="titleSearch">Buscar por título</label>
+            <input #titleInput id="titleSearch" class="title-search min-w-0 flex-1 sm:w-52 sm:flex-none" type="search" placeholder="Buscar por título..." (keydown.enter)="buscarTitulo(titleInput.value)">
+            <button class="secondary-button rounded-xl px-4 py-3 text-xs font-semibold transition hover:border-white/20 hover:text-white" type="button" (click)="buscarTitulo(titleInput.value)">Buscar</button>
+          </div>
+        </div>
+
+        <div class="game-grid">
+          @for (game of games; track game.id) {
+            <article class="game-card group overflow-hidden rounded-3xl border border-white/[0.08] bg-panel transition duration-300 hover:-translate-y-1 hover:border-white/[0.16]">
+              <div class="game-cover relative isolate overflow-hidden"
+                [class.cover--action]="game.genre === 'Action'"
+                [class.cover--adventure]="game.genre === 'Adventure'"
+                [class.cover--platform]="game.genre === 'Platform'"
+                [class.cover--rpg]="game.genre === 'RPG'"
+                [class.cover--racing]="game.genre === 'Racing'"
+                [class.cover--simulation]="game.genre === 'Simulation'"
+                [class.cover--sports]="game.genre === 'Sports'"
+                [class.cover--strategy]="game.genre === 'Strategy'">
+                <div class="cover-art" aria-hidden="true"><span>{{ game.genre.slice(0, 1) }}</span></div>
+                <span class="cover-id">NO. {{ game.id.toString().padStart(2, '0') }}</span>
+                <span class="cover-tag">{{ game.genre }}</span>
+                <div class="cover-caption">
+                  <p class="text-[9px] font-bold tracking-[0.22em] text-white/60">PIXEL CLUB ORIGINAL</p>
+                  <h3 class="mt-1 line-clamp-1 text-xl font-black tracking-tight text-white sm:text-2xl">{{ game.title }}</h3>
+                </div>
+                <div class="cover-shine" aria-hidden="true"></div>
+              </div>
+              <div class="flex items-center justify-between gap-3 px-4 py-4 sm:px-5">
+                <div class="min-w-0">
+                  <p class="truncate text-[11px] font-medium text-slate-400">{{ game.platform }}</p>
+                  <p class="mt-1 text-[10px] font-semibold tracking-wide text-slate-600">VIDEOJUEGO · {{ game.genre | uppercase }}</p>
+                </div>
+                <span class="shrink-0 rounded-xl border border-lime-300/15 bg-lime-300/[0.07] px-3 py-2 text-sm font-bold text-lime-200">{{ game.price | currency:'EUR':'symbol':'1.2-2' }}</span>
+              </div>
+            </article>
+          } @empty {
+            <div class="empty-state col-span-full rounded-3xl border border-dashed border-white/10 px-6 py-16 text-center">
+              <span class="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04] text-2xl text-lime-300" aria-hidden="true">⌕</span>
+              <h3 class="text-lg font-bold">No encontramos esa partida</h3>
+              <p class="mt-2 text-sm text-slate-500">Prueba con otros términos o cambia los filtros.</p>
+            </div>
+          }
+        </div>
+
+        <div class="mt-7 flex flex-col justify-between gap-4 border-t border-white/[0.07] pt-5 sm:flex-row sm:items-center">
+          <div class="flex items-center gap-2 text-xs text-slate-500">
+            <label for="pageSize">Mostrar</label>
+            <select id="pageSize" class="page-size" [value]="pageSize" (change)="onPageSizeChange($any($event.target).value)">
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="15">15</option>
+              <option value="20">20</option>
+            </select>
+            <span>por página</span>
+          </div>
+          <nav class="flex items-center justify-between gap-3 sm:justify-end" aria-label="Paginación">
+            <button class="page-button" type="button" (click)="paginaAnterior()" [disabled]="currentPage === 1">← <span class="hidden sm:inline">Anterior</span></button>
+            <span class="min-w-24 text-center text-xs font-medium text-slate-400">Página <span class="font-bold text-white">{{ currentPage }}</span> / {{ totalPages || 1 }}</span>
+            <button class="page-button" type="button" (click)="paginaSiguiente()" [disabled]="currentPage >= totalPages"> <span class="hidden sm:inline">Siguiente</span> →</button>
+          </nav>
+        </div>
+      </section>
+    </div>
+
+    <footer class="mt-14 flex flex-col items-center justify-between gap-3 border-t border-white/[0.06] pt-6 text-[10px] font-medium tracking-[0.12em] text-slate-600 sm:flex-row">
+      <span>PIXEL CLUB <span class="text-lime-300/70">✳</span> TU PRÓXIMA PARTIDA EMPIEZA AQUÍ</span>
+      <span>HECHO PARA QUIENES JUEGAN</span>
+    </footer>
+  </main>
 </div>
