@@ -1,13 +1,29 @@
+
 <div style="padding: 20px; font-family: sans-serif;">
+
   <h1>Catálogo de Videojuegos</h1>
 
   <div style="display: flex; flex-wrap: wrap; gap: 16px;">
-    <span>Buscar videojuego por ID: </span>
+    <span>Buscar videojuego por ID:</span>
     <input #myInput type="text">
     <button (click)="buscarId(+myInput.value)">Buscar</button>
   </div>
+
   <div style="display: flex; flex-wrap: wrap; gap: 16px;">
-    <span>Buscar videojuego por Género: </span>
+    <span>Buscar por título:</span>
+    <input #titleInput type="text" placeholder="Título...">
+    <button (click)="buscarTitulo(titleInput.value)">Buscar</button>
+  </div>
+
+  <div style="display: flex; flex-wrap: wrap; gap: 16px;">
+    <span>Búsqueda global:</span>
+    <input #globalInput type="text" placeholder="Buscar en todos los campos...">
+    <button (click)="buscarGlobal(globalInput.value)">Buscar</button>
+  </div>
+
+  <div style="display: flex; flex-wrap: wrap; gap: 16px;">
+    <span>Buscar por Género:</span>
+
     <select (change)="onGenreChange($event)">
       <option value="">Todos</option>
       <option value="Action">Action</option>
@@ -18,19 +34,33 @@
       <option value="Sports">Sports</option>
       <option value="Strategy">Strategy</option>
     </select>
-    <button (click)="buscarId(+myInput.value)">Buscar</button>
   </div>
 
   <div style="display: flex; flex-wrap: wrap; gap: 16px;">
-    @for (game of games; track game.title) {
-    <div style="border: 1px solid #ccc; padding: 16px; border-radius: 8px; width: 200px;">
-      <h3>{{ game.title }}</h3>
-      <p><strong>Género:</strong> {{ game.genre }}</p>
-      <p><strong>Plataforma:</strong> {{ game.platform }}</p>
-      <p><strong>Precio:</strong> {{ game.price }}</p>
-    </div>
+    <span>Buscar por Plataforma:</span>
+
+    <select (change)="onPlatformChange($event)">
+      <option value="">Todas</option>
+      <option value="PC">PC</option>
+      <option value="PlayStation">PlayStation</option>
+      <option value="Xbox">Xbox</option>
+      <option value="Nintendo Switch">Nintendo Switch</option>
+    </select>
+  </div>
+
+  <div style="display: flex; flex-wrap: wrap; gap: 16px;">
+
+    @for (game of games; track game.id) {
+      <div style="border: 1px solid #ccc; padding: 16px; border-radius: 8px; width: 200px;">
+        <h3>{{ game.title }}</h3>
+        <p><strong>Género:</strong> {{ game.genre }}</p>
+        <p><strong>Plataforma:</strong> {{ game.platform }}</p>
+        <p><strong>Precio:</strong> {{ game.price }}</p>
+      </div>
+
     } @empty {
-    <p>Cargando...</p>
+      <p>No se encontraron videojuegos.</p>
     }
   </div>
+
 </div>
