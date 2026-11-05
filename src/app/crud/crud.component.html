@@ -1,0 +1,68 @@
+<form #gameForm="ngForm" (ngSubmit)="saveGame()">
+    <label for="titleId">Título</label>
+    <input [class.invalid-control]="
+    title.invalid &&
+    (title.dirty || title.touched)
+  " id="titleId" name="title" [(ngModel)]="game.title" minlength="3" required #title="ngModel">
+
+
+    @if (title.invalid && (title.dirty || title.touched)) {
+
+    @if (title.errors?.['required']) {
+    <p>El título es obligatorio.</p>
+    }
+
+    @if (title.errors?.['minlength']) {
+    <p>El título debe tener al menos 3 caracteres.</p>
+    }
+    }
+
+
+    <select name="genre" [(ngModel)]="game.genre" required #genre="ngModel">
+        <option value="">Selecciona un género</option>
+        <option value="Platform">Platform</option>
+        <option value="Strategy">Strategy</option>
+        <option value="Racing">Racing</option>
+        <option value="RPG">RPG</option>
+        <option value="Action">Action</option>
+        <option value="Adventure">Adventure</option>
+        <option value="Simulation">Simulation</option>
+        <option value="Sports">Sports</option>
+    </select>
+
+    @if (genre.invalid && ( genre.dirty || genre.touched)) {
+    <p>Género obligatorio</p>
+    }
+
+    <label for="priceId">Precio: </label>
+    <input [class.invalid-control]="
+    title.invalid &&
+    (title.dirty || title.touched)
+  " id="priceId" type="number" name="price" [(ngModel)]="game.price" required min="0.01" max="100" #price="ngModel">
+
+    @if (price.invalid && ( price.dirty || price.touched)) {
+    @if (price.errors?.['required']) {
+    <p>Precio es obligatorio</p>
+    }
+    @if (price.errors?.['min'] || price.errors?.['max']) {
+    <p>Precio fuera de rango</p>
+    }}
+
+
+    <label for="stockId">Stock: </label>
+    <input [class.invalid-control]="
+    title.invalid &&
+    (title.dirty || title.touched)
+  " id="stockId" type="number" name="stock" [(ngModel)]="game.stock" required min="0" max="999" #stock="ngModel">
+
+    @if (stock.invalid && ( stock.dirty || stock.touched)) {
+    @if (stock.errors?.['required']) {
+    <p>Stock es obligatorio</p>
+    }
+    @if (stock.errors?.['min'] || stock.errors?.['max']) {
+    <p>Stock fuera de rango</p>
+    }}
+
+
+
+</form>

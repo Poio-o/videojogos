@@ -3,11 +3,12 @@ import { CurrencyPipe, UpperCasePipe } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { GameService } from './services/game.service';
 import { Game } from './models/game';
+import { CrudComponent } from './crud/crud.component';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  imports: [CurrencyPipe, UpperCasePipe]
+  imports: [CurrencyPipe, UpperCasePipe, CrudComponent]
 })
 export class AppComponent implements OnInit {
 
