@@ -117,4 +117,19 @@ export class AppComponent implements OnInit {
     this.onChangePage();
   }
 
+  onActGame(_game: Game): void {
+    this.editGame = undefined;
+    this.onChangePage();
+  }
+
+  onEditGame(game: Game): void {
+    this.editGame = { ...game };
+  }
+
+  onCancelEdit(): void {
+    this.editGame = undefined;
+  }
+
+  editGame?: Game;
+
 }

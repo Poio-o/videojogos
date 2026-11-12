@@ -1,6 +1,5 @@
 @import "tailwindcss";
 @import "./app/app.component.css";
-@source "./app/app.component.html";
 
 @theme {
   --color-night: #0b0d12;

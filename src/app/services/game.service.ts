@@ -60,34 +60,50 @@ export class GameService {
     return this.http.get<Game[]>(
       `${this.apiUrl}?price_gte=${price_gte}&price_lte=${price_lte}`
     );
+
   }
 
-getGamesPage(
-  page: number,
-  limit: number,
-  genre: string,
-  platform: string,
-  title: string,
-  global: string,
-  minPrice: number,
-  maxPrice: number
-) {
-  let params = new HttpParams()
-    .set('_page', page)
-    .set('_limit', limit);
+  postGame(game: Game) {
+    return this.http.post<Game>(this.apiUrl, game)
+  }
 
-  if (genre) params = params.set('genre', genre);
-  if (platform) params = params.set('platform', platform);
-  if (title) params = params.set('title_like', title);
-  if (global) params = params.set('q', global);
-  if (minPrice > 0) params = params.set('price_gte', minPrice);
-  if (maxPrice > 0) params = params.set('price_lte', maxPrice);
+  putGame(game: Game) {
+    return this.updateGame(game);
+  }
 
-  return this.http.get<Game[]>(this.apiUrl, {
-    params,
-    observe: 'response'
-  });
-}
+  getGamesPage(
+    page: number,
+    limit: number,
+    genre: string,
+    platform: string,
+    title: string,
+    global: string,
+    minPrice: number,
+    maxPrice: number
+  ) {
+    let params = new HttpParams()
+      .set('_page', page)
+      .set('_limit', limit);
+
+    if (genre) params = params.set('genre', genre);
+    if (platform) params = params.set('platform', platform);
+    if (title) params = params.set('title_like', title);
+    if (global) params = params.set('q', global);
+    if (minPrice > 0) params = params.set('price_gte', minPrice);
+    if (maxPrice > 0) params = params.set('price_lte', maxPrice);
+
+    return this.http.get<Game[]>(this.apiUrl, {
+      params,
+      observe: 'response'
+    });
+  }
+
+  updateGame(game: Game) {
+    return this.http.put<Game>(
+      `${this.apiUrl}/${game.id}`,
+      game
+    );
+  }
 
 
 }

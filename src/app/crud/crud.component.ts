@@ -1,5 +1,5 @@
-import { Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, inject, Input, output, ViewChild } from '@angular/core';
+import { FormsModule, NgForm } from '@angular/forms';
 import { GameService } from '../services/game.service';
 import { Game } from '../models/game';
 
@@ -14,16 +14,50 @@ export class CrudComponent {
 
   private gameService = inject(GameService);
 
-  game: Game = {
-  title: '',
-  genre: '',
-  platform: '',
-  price: 0,
-  stock: 0
-};
+  game: Game = this.emptyGame();
+  actualizaGames = output<Game>();
+  editCancelled = output<void>();
 
-saveGame() {
-  
-}
+  @ViewChild('gameForm') private gameForm?: NgForm;
 
+  @Input()
+  set editGame(game: Game | undefined) {
+    this.game = game ? { ...game } : this.emptyGame();
+    this.gameForm?.resetForm(this.game);
+  }
+
+  saveGame(form: NgForm) {
+    if (form.invalid || form.pending) {
+      return;
+    }
+
+    const request = this.game.id !== undefined
+      ? this.gameService.updateGame(this.game)
+      : this.gameService.postGame(this.game);
+
+    request.subscribe(savedGame => {
+      this.resetForm(form);
+      this.actualizaGames.emit(savedGame);
+    });
+  }
+
+  cancelEdit(form: NgForm): void {
+    this.resetForm(form);
+    this.editCancelled.emit();
+  }
+
+  private resetForm(form: NgForm): void {
+    this.game = this.emptyGame();
+    form.resetForm(this.game);
+  }
+
+  private emptyGame(): Game {
+    return {
+      title: '',
+      genre: '',
+      platform: '',
+      price: 0,
+      stock: 0
+    };
+  }
 }
