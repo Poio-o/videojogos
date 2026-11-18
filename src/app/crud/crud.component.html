@@ -2,15 +2,14 @@
   <div class="crud-heading">
     <p class="crud-eyebrow">AMPLÍA TU COLECCIÓN</p>
     <h2 id="crud-title">{{ game.id === undefined ? 'Añadir videojuego' : 'Editar videojuego' }}</h2>
-    <p>{{ game.id === undefined ? 'Completa los datos para añadir un juego al catálogo.' : 'Actualiza los datos de este juego.' }}</p>
+    <p>{{ game.id === undefined ? 'Completa los datos para añadir un juego al catálogo.' : 'Actualiza los datos de este juego.'}}</p>
   </div>
 
-  <form #gameForm="ngForm" (ngSubmit)="saveGame(gameForm)">
+  <form [formGroup]="formGroup" #gameForm="ngForm" (ngSubmit)="saveGame(gameForm)">
     <div class="crud-fields">
       <div class="crud-field">
         <label for="titleId">Título</label>
-        <input [class.invalid-control]="title.invalid && (title.dirty || title.touched)" id="titleId" name="title"
-          [(ngModel)]="game.title" minlength="3" required #title="ngModel">
+        <input [class.invalid-control]="title.invalid && (title.dirty || title.touched)" id="titleId" name="title" formControlName="title">
         @if (title.invalid && (title.dirty || title.touched)) {
         @if (title.errors?.['required']) {
         <p class="field-error">El título es obligatorio.</p>
