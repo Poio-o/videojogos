@@ -14,43 +14,84 @@ export class CrudComponent {
 
   private gameService = inject(GameService);
 
-  title = new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(3)] })
-
-  genre = new FormControl('', {
-    nonNullable: true,
-    validators: [Validators.required]
-  })
-
   formGroup = new FormGroup({
-    title: this.title,
-    genre: this.genre,
-  })
-
+    title: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(3)]
+    }),
+    genre: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required]
+    }),
+    platform: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required]
+    }),
+    price: new FormControl(0, {
+      nonNullable: true,
+      validators: [Validators.required, Validators.min(0.01), Validators.max(100)]
+    }),
+    stock: new FormControl(0, {
+      nonNullable: true,
+      validators: [Validators.required, Validators.min(0), Validators.max(999), Validators.pattern(/^\d+$/)]
+    })
+  });
 
   game: Game = this.emptyGame();
   actualizaGames = output<Game>();
   editCancelled = output<void>();
+  saveError = '';
+  saveMessage = '';
 
-  @ViewChild('gameForm') private gameForm?: FormGroupDirective;
+  private gameForm?: FormGroupDirective;
+
+  @ViewChild('gameForm')
+  set formDirective(form: FormGroupDirective | undefined) {
+    this.gameForm = form;
+    if (form) {
+      form.resetForm(this.formValues(this.game));
+    }
+  }
 
   @Input()
   set editGame(game: Game | undefined) {
     this.game = game ? { ...game } : this.emptyGame();
-    this.gameForm?.resetForm(this.game);
+    if (this.gameForm) {
+      this.gameForm.resetForm(this.formValues(this.game));
+    } else {
+      this.formGroup.reset(this.formValues(this.game));
+    }
+    this.clearMessages();
   }
 
-  saveGame(form: FormGroupDirective) {
-    if (form.invalid || form.pending) {
+  saveGame(form: FormGroupDirective): void {
+    this.formGroup.markAllAsTouched();
+
+    if (this.formGroup.invalid || this.formGroup.pending) {
       return;
     }
 
-    const request = this.game.id !== undefined
-      ? this.gameService.updateGame(this.game)
-      : this.gameService.postGame(this.game);
+    const isEditing = this.game.id !== undefined;
+    const game: Game = {
+      ...this.formGroup.getRawValue(),
+      ...(isEditing ? { id: this.game.id } : {})
+    };
+    const request = isEditing
+      ? this.gameService.updateGame(game)
+      : this.gameService.postGame(game);
 
-    request.subscribe(savedGame => {
-      this.resetForm(form);
-      this.actualizaGames.emit(savedGame);
+    this.clearMessages();
+    request.subscribe({
+      next: savedGame => {
+        this.resetForm(form);
+        this.actualizaGames.emit(savedGame);
+        this.saveMessage = isEditing
+          ? 'Videojuego actualizado correctamente.'
+          : 'Videojuego creado correctamente.';
+      },
+      error: () => {
+        this.saveError = 'No se pudo guardar el videojuego. Inténtalo de nuevo.';
+      }
     });
   }
 
@@ -59,9 +100,18 @@ export class CrudComponent {
     this.editCancelled.emit();
   }
 
+  limpiar(form: FormGroupDirective): void {
+    const wasEditing = this.game.id !== undefined;
+    this.resetForm(form);
+    if (wasEditing) {
+      this.editCancelled.emit();
+    }
+  }
+
   private resetForm(form: FormGroupDirective): void {
     this.game = this.emptyGame();
-    form.resetForm(this.game);
+    form.resetForm(this.formValues(this.game));
+    this.clearMessages();
   }
 
   private emptyGame(): Game {
@@ -72,5 +122,20 @@ export class CrudComponent {
       price: 0,
       stock: 0
     };
+  }
+
+  private formValues(game: Game) {
+    return {
+      title: game.title,
+      genre: game.genre,
+      platform: game.platform,
+      price: game.price,
+      stock: game.stock
+    };
+  }
+
+  private clearMessages(): void {
+    this.saveError = '';
+    this.saveMessage = '';
   }
 }

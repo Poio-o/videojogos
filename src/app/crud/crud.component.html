@@ -5,16 +5,17 @@
     <p>{{ game.id === undefined ? 'Completa los datos para añadir un juego al catálogo.' : 'Actualiza los datos de este juego.'}}</p>
   </div>
 
-  <form [formGroup]="formGroup" #gameForm="ngForm" (ngSubmit)="saveGame(gameForm)">
+  <form [formGroup]="formGroup" #gameForm="ngForm" (ngSubmit)="saveGame(gameForm)" novalidate>
     <div class="crud-fields">
       <div class="crud-field">
         <label for="titleId">Título</label>
-        <input [class.invalid-control]="title.invalid && (title.dirty || title.touched)" id="titleId" name="title" formControlName="title">
-        @if (title.invalid && (title.dirty || title.touched)) {
-        @if (title.errors?.['required']) {
+        <input [class.invalid-control]="formGroup.controls.title.invalid && (formGroup.controls.title.touched || gameForm.submitted)"
+          id="titleId" type="text" formControlName="title">
+        @if (formGroup.controls.title.invalid && (formGroup.controls.title.touched || gameForm.submitted)) {
+        @if (formGroup.controls.title.hasError('required')) {
         <p class="field-error">El título es obligatorio.</p>
         }
-        @if (title.errors?.['minlength']) {
+        @if (formGroup.controls.title.hasError('minlength')) {
         <p class="field-error">El título debe tener al menos 3 caracteres.</p>
         }
         }
@@ -22,7 +23,8 @@
 
       <div class="crud-field">
         <label for="genreId">Género</label>
-        <select id="genreId" name="genre" [(ngModel)]="game.genre" required #genre="ngModel">
+        <select id="genreId" formControlName="genre"
+          [class.invalid-control]="formGroup.controls.genre.invalid && (formGroup.controls.genre.touched || gameForm.submitted)">
           <option value="">Selecciona un género</option>
           <option value="Platform">Platform</option>
           <option value="Strategy">Strategy</option>
@@ -33,34 +35,35 @@
           <option value="Simulation">Simulation</option>
           <option value="Sports">Sports</option>
         </select>
-        @if (genre.invalid && (genre.dirty || genre.touched)) {
+        @if (formGroup.controls.genre.invalid && (formGroup.controls.genre.touched || gameForm.submitted)) {
         <p class="field-error">El género es obligatorio.</p>
         }
       </div>
 
       <div class="crud-field">
         <label for="platformId">Plataforma</label>
-        <select id="platformId" name="platform" [(ngModel)]="game.platform" required #platform="ngModel">
+        <select id="platformId" formControlName="platform"
+          [class.invalid-control]="formGroup.controls.platform.invalid && (formGroup.controls.platform.touched || gameForm.submitted)">
           <option value="">Selecciona una plataforma</option>
           <option value="PC">PC</option>
           <option value="PlayStation">PlayStation</option>
           <option value="Xbox">Xbox</option>
           <option value="Switch">Nintendo Switch</option>
         </select>
-        @if (platform.invalid && (platform.dirty || platform.touched)) {
+        @if (formGroup.controls.platform.invalid && (formGroup.controls.platform.touched || gameForm.submitted)) {
         <p class="field-error">La plataforma es obligatoria.</p>
         }
       </div>
 
       <div class="crud-field">
         <label for="priceId">Precio (€)</label>
-        <input [class.invalid-control]="price.invalid && (price.dirty || price.touched)" id="priceId" type="number"
-          name="price" [(ngModel)]="game.price" required min="0.01" max="100" step="0.01" #price="ngModel">
-        @if (price.invalid && (price.dirty || price.touched)) {
-        @if (price.errors?.['required']) {
+        <input id="priceId" type="number" formControlName="price" min="0.01" max="100" step="0.01"
+          [class.invalid-control]="formGroup.controls.price.invalid && (formGroup.controls.price.touched || gameForm.submitted)">
+        @if (formGroup.controls.price.invalid && (formGroup.controls.price.touched || gameForm.submitted)) {
+        @if (formGroup.controls.price.hasError('required')) {
         <p class="field-error">El precio es obligatorio.</p>
         }
-        @if (price.errors?.['min'] || price.errors?.['max']) {
+        @if (formGroup.controls.price.hasError('min') || formGroup.controls.price.hasError('max')) {
         <p class="field-error">El precio debe estar entre 0,01 € y 100 €.</p>
         }
         }
@@ -68,21 +71,31 @@
 
       <div class="crud-field">
         <label for="stockId">Stock</label>
-        <input [class.invalid-control]="stock.invalid && (stock.dirty || stock.touched)" id="stockId" type="number"
-          name="stock" [(ngModel)]="game.stock" required min="0" max="999" step="1" #stock="ngModel">
-        @if (stock.invalid && (stock.dirty || stock.touched)) {
-        @if (stock.errors?.['required']) {
+        <input id="stockId" type="number" formControlName="stock" min="0" max="999" step="1"
+          [class.invalid-control]="formGroup.controls.stock.invalid && (formGroup.controls.stock.touched || gameForm.submitted)">
+        @if (formGroup.controls.stock.invalid && (formGroup.controls.stock.touched || gameForm.submitted)) {
+        @if (formGroup.controls.stock.hasError('required')) {
         <p class="field-error">El stock es obligatorio.</p>
         }
-        @if (stock.errors?.['min'] || stock.errors?.['max']) {
+        @if (formGroup.controls.stock.hasError('min') || formGroup.controls.stock.hasError('max')) {
         <p class="field-error">El stock debe estar entre 0 y 999.</p>
+        }
+        @if (formGroup.controls.stock.hasError('pattern')) {
+        <p class="field-error">El stock debe ser un número entero.</p>
         }
         }
       </div>
     </div>
 
+    @if (saveError) {
+    <p class="form-message form-message--error" role="alert">{{ saveError }}</p>
+    }
+    @if (saveMessage) {
+    <p class="form-message form-message--success" role="status">{{ saveMessage }}</p>
+    }
+
     <div class="crud-actions">
-      <button class="crud-submit" type="submit" [disabled]="gameForm.invalid">
+      <button class="crud-submit" type="submit">
         @if (game.id !== undefined) {
           Actualizar
         } @else {
@@ -90,6 +103,7 @@
         }
         <span aria-hidden="true">↗</span>
       </button>
+      <button class="crud-cancel" type="button" (click)="limpiar(gameForm)">Limpiar</button>
       @if (game.id !== undefined) {
         <button class="crud-cancel" type="button" (click)="cancelEdit(gameForm)">Cancelar</button>
       }

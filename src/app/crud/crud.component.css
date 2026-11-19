@@ -89,6 +89,19 @@
   font-size: 0.7rem;
 }
 
+.form-message {
+  margin: 1rem 0 0;
+  font-size: 0.8rem;
+}
+
+.form-message--error {
+  color: #fda4af;
+}
+
+.form-message--success {
+  color: #bef264;
+}
+
 .crud-actions {
   display: flex;
   flex-wrap: wrap;
